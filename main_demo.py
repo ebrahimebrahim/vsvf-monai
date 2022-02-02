@@ -15,6 +15,9 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Sequence
+import tempfile
+import glob
+import os
 
 # the part we intend to contribute
 from vsvf import Vsvf, VsvfDualizeMomentum, VsvfIntegrateVelocity
@@ -56,4 +59,23 @@ def synthesize_image(shape:Sequence[int], min_size:int, max_size:int):
 
 
 if __name__ == "__main__":
-  pass # main demo work will go here
+
+  # Create a temporary directory to work in
+  root_dir = tempfile.mkdtemp()
+  data_dir = os.path.join(root_dir, "synthetic_data")
+  print(f"Working in the following directory: {data_dir}")
+  save_image = monai.transforms.SaveImage(
+    output_dir=data_dir,
+    output_ext='.png',
+    scale = 255, # applies to png format only
+    separate_folder = False,
+    print_log=False
+  )
+
+  # Save a bunch of synthetic images in the temporary directory
+  number_of_images_to_generate = 300
+  for _ in range(number_of_images_to_generate):
+    image = synthesize_image((128,128), 32, 96)
+    image = np.expand_dims(image, axis=0) # add channel dimension, which save_image expects
+    save_image(image)
+  image_paths = glob.glob(os.path.join(data_dir,'*.png'))
