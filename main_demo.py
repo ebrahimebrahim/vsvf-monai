@@ -79,3 +79,6 @@ if __name__ == "__main__":
     image = np.expand_dims(image, axis=0) # add channel dimension, which save_image expects
     save_image(image)
   image_paths = glob.glob(os.path.join(data_dir,'*.png'))
+
+  # Create a data list made out of image pairs (including pairs in a symmetric and reflexive fashion)
+  data = [{'img0':image_paths[i0], 'img1':image_paths[i1]} for i0 in range(len(image_paths)) for i1 in range(len(image_paths))]
