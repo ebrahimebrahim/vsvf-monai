@@ -80,5 +80,29 @@ if __name__ == "__main__":
     save_image(image)
   image_paths = glob.glob(os.path.join(data_dir,'*.png'))
 
-  # Create a data list made out of image pairs (including pairs in a symmetric and reflexive fashion)
-  data = [{'img0':image_paths[i0], 'img1':image_paths[i1]} for i0 in range(len(image_paths)) for i1 in range(len(image_paths))]
+  # Split training vs validation data, and
+  # create data list made out of image pairs (including pairs in a symmetric and reflexive fashion)
+  image_paths_valid, image_paths_train = monai.data.utils.partition_dataset(image_paths, ratios=(2,8), shuffle=True)
+  def create_image_pairs_data(paths):
+    """Given a list of image paths, create a data list where each data item is a dictionary containing a pair of images."""
+    return [{'img0':paths[i0], 'img1':paths[i1]} for i0 in range(len(paths)) for i1 in range(len(paths))]
+  data_train = create_image_pairs_data(image_paths_train)
+  data_valid = create_image_pairs_data(image_paths_valid)
+
+  # Create transform for loading the data and producing a 2-channel tensor of images,
+  # the two channels being for target/fixed vs moving image in the registration task
+  transform = monai.transforms.Compose(
+    transforms=[
+      monai.transforms.LoadImageD(keys=['img0', 'img1'], image_only=True),
+      monai.transforms.ToTensorD(keys=['img0', 'img1']),
+      monai.transforms.AddChannelD(keys=['img0', 'img1']),
+      monai.transforms.ConcatItemsD(keys=['img0', 'img1'], name='img01', dim=0),
+      monai.transforms.DeleteItemsD(keys=['img0', 'img1']),
+    ]
+  )
+
+  # Create datasets
+  # (TODO: Replace these by CacheDataset when training infrastructure is in place.
+  # For now they are regular datasets to prevent memory overhead while in early development.)
+  dataset_train = monai.data.Dataset(data=data_train, transform=transform)
+  dataset_valid = monai.data.Dataset(data=data_valid, transform=transform)
