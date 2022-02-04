@@ -5,6 +5,7 @@ asttokens==2.0.5
 attrs==21.4.0
 Babel==2.9.1
 backcall==0.2.0
+beautifulsoup4==4.10.0
 black==21.12b0
 bleach==4.1.0
 certifi==2021.10.8
@@ -20,8 +21,10 @@ docutils==0.17.1
 entrypoints==0.3
 et-xmlfile==1.1.0
 executing==0.8.2
+filelock==3.4.2
 fonttools==4.28.5
 future==0.18.2
+gdown==4.2.1
 idna==3.3
 imageio==2.13.5
 imagesize==1.3.0
@@ -88,6 +91,7 @@ pynrrd==0.4.2
 pypandoc==1.7.2
 pyparsing==3.0.6
 pyrsistent==0.18.1
+PySocks==1.7.1
 python-dateutil==2.8.2
 python-utils==3.1.0
 pytz==2021.3
@@ -101,6 +105,7 @@ scipy==1.7.3
 Send2Trash==1.8.0
 six==1.16.0
 snowballstemmer==2.2.0
+soupsieve==2.3.1
 Sphinx==4.4.0
 sphinx-gallery==0.3.1
 sphinxcontrib-applehelp==1.0.2
